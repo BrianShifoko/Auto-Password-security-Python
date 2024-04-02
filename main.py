@@ -1,51 +1,69 @@
 # Kibo FPWP Final Project
 #welcoming note and name input
-print("\n" "Welcome to BlogVot Password Security Center Creater")
 
-print("\n------------------------------------------")
-
-name = input("\n" "What is your name kindly or your Company name ?")
-
-print("\n"
-      "welcome! ", name, " to Free BlogVot Password Security center Creater")
-# necessary imports
 import secrets
 import string
 
-# define the alphabet
-letters = string.ascii_letters
-digits = string.digits
-special_chars = string.punctuation
+def generate_password(length, min_digits=2, require_special=True):
+    """Generate a password meeting specified constraints."""
+    # Define character sets for password generation
+    alphabet = string.ascii_letters + string.digits + string.punctuation if require_special else string.ascii_letters + string.digits
+    
+    # Initialize list to store password characters
+    password_characters = []
+    
+    # Add required minimum digits to the password
+    for _ in range(min_digits):
+        password_characters.append(secrets.choice(string.digits))
+    
+    # Fill the remaining characters with a mix of letters and special characters
+    for _ in range(length - min_digits):
+        password_characters.append(secrets.choice(alphabet))
+    
+    # Shuffle the characters to provide a more randomized but structured arrangement
+    secrets.SystemRandom().shuffle(password_characters)
+    
+    # Concatenate the characters to form the password
+    return ''.join(password_characters)
 
-alphabet = letters + digits + special_chars
+def get_integer_input(prompt, error_message="Please enter a valid integer."):
+    """Prompt the user for an integer input."""
+    while True:
+        try:
+            value = int(input(prompt))
+            return value
+        except ValueError:
+            print(error_message)
 
-# fix password length
-pwd_length = int(
-    input("\n"
-          "Input length of password characters to generate for you?"))
+def get_yes_no_input(prompt):
+    """Prompt the user for a yes or no input."""
+    while True:
+        response = input(prompt).lower()
+        if response in ["yes", "y"]:
+            return True
+        elif response in ["no", "n"]:
+            return False
+        else:
+            print("Please enter 'yes' or 'no'.")
 
-# generate a password string
-pwd = ''
-for i in range(pwd_length):
-    pwd += ''.join(secrets.choice(alphabet))
+def main():
+    print("\nWelcome to BlogVot Password Security Center Creator")
+    print("------------------------------------------")
+    name = input("\nWhat is your name or your Company name? ")
+    print("\nWelcome, {}! to Free BlogVot Password Security Center Creator".format(name))
+    
+    while True:
+        pwd_length = get_integer_input("\nEnter the length of the password you want to generate: ")
 
-# generate password meeting constraints
-while True:
-    pwd = ''
-    for i in range(pwd_length):
-        pwd += ''.join(secrets.choice(alphabet))
+        print("\nGenerating password...")
+        password = generate_password(pwd_length)
 
-    if (any(char in special_chars for char in pwd)
-            and sum(char in digits for char in pwd) >= 2):
-        print("\n" "Your Password generated is: ", pwd)
-        print("\n" "Do you want to use this password ?")
-        ans = input(str("yes or no? "))
-        yes = "string"
-        no = "string"
-        if ans == "yes":
-            print("\n" "Welcome again! Your Security is our pride \U0001F609")
-            break  #break the password generation if user is satisfied
-        elif ans == "no":
-            print("\n" "*********** Your New password is*********")
-        continue  #continue to generate passwords for the user
-print("\n" "***************************************")
+        print("\nYour generated password is:", password)
+        if get_yes_no_input("\nDo you want to use this password? (yes/no): "):
+            print("\nWelcome again! Your Security is our pride \U0001F609")
+            break
+        else:
+            print("\n*********** Let's generate a new password *********")
+
+if __name__ == "__main__":
+    main()
